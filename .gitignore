@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual Environment
+venv/
+.env
+
+
+# Logs
+*.log
+
+# SQLite database
+db.sqlite3
+
+# IDE / Editor
+.vscode/
+
+
+# Deployment
+celerybeat-schedule
+*.pid
+*.bak
+*.tar.gz
