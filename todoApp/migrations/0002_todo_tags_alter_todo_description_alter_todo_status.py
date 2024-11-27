@@ -6,23 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('todoApp', '0001_initial'),
+        ("todoApp", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='todo',
-            name='tags',
+            model_name="todo",
+            name="tags",
             field=models.JSONField(blank=True, default=list),
         ),
         migrations.AlterField(
-            model_name='todo',
-            name='description',
+            model_name="todo",
+            name="description",
             field=models.TextField(max_length=1000),
         ),
         migrations.AlterField(
-            model_name='todo',
-            name='status',
-            field=models.CharField(choices=[('OPEN', 'Open'), ('WORKING', 'Working'), ('COMPLETED', 'Completed'), ('PENDING REVIEW', 'PENDING REVIEW'), ('OVERDUE', 'OVERDUE'), ('CANCELLED', 'CANCELLED')], default='OPEN', max_length=20),
+            model_name="todo",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("OPEN", "Open"),
+                    ("WORKING", "Working"),
+                    ("COMPLETED", "Completed"),
+                    ("PENDING REVIEW", "PENDING REVIEW"),
+                    ("OVERDUE", "OVERDUE"),
+                    ("CANCELLED", "CANCELLED"),
+                ],
+                default="OPEN",
+                max_length=20,
+            ),
         ),
     ]
