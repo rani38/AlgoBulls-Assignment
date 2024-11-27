@@ -8,7 +8,7 @@ from rest_framework.decorators import (
     api_view,
 )
 from django.shortcuts import get_object_or_404
-from .models import Todo
+from .models import Todo, Tag
 import json
 import datetime
 
@@ -27,9 +27,6 @@ def addtodo(request):
             due_date = data.get("due_date")
             status = data.get("status", "OPEN")  # Default status
             tags = data.get("tags", [])
-
-            # remove duplicate tags if any
-            tags = list(set(tags))
 
             # check due_date is not in past
             if due_date:
@@ -73,13 +70,24 @@ def addtodo(request):
 
             # done with checks push in database
             # Create new To-Do item
+            # tags are many to many realtion so we need to pass list of tags
+            # Process tags
+            tag_objects = []
+            for tag_name in tags:
+                tag_name = tag_name.strip()
+                if tag_name:
+                    # Create tag if it doesn't exist
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    tag_objects.append(tag)
+
+            # Create the To-Do item
             todo = Todo.objects.create(
                 title=title,
                 description=description,
-                due_date=due_date if due_date else None,
+                due_date=due_date,
                 status=status,
-                tags=tags,
             )
+            todo.tags.set(tag_objects)
 
             return JsonResponse(
                 {"message": "To-Do item added successfully!", "id": todo.id},
@@ -146,8 +154,14 @@ def updatetodo(request, id):
         todo.status = data.get("status", todo.status)
 
         # check for tags
-        todo.tags = list(set(data.get("tags", todo.tags)))
-
+        tag_objects = []
+        for tag_name in data.get('tags'):
+            tag_name = tag_name.strip()
+            if tag_name:
+                # Create tag if it doesn't exist
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                tag_objects.append(tag)
+        todo.tags.set(tag_objects)
         todo.save()
 
         return JsonResponse(
