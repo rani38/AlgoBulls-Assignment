@@ -1,0 +1,45 @@
+name: Deploy Django Project to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Ya koi bhi branch jo aapko deploy karni ho
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code from GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python version
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install dependencies (requirements.txt se)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 4: Run tests (optional, for CI purposes)
+      - name: Run tests
+        run: |
+          python manage.py test
+
+      # Step 5: Deploy to AWS EC2 instance via SSH
+      - name: Deploy to AWS EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
+        run: |
+          # EC2 instance pe deploy karna
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.AWS_SSH_KEY }} ubuntu@your-ec2-public-ip "
+            cd /path/to/your/app && 
+            git pull origin main && 
+            pip install -r requirements.txt && 
+            python manage.py migrate && 
+            python manage.py collectstatic --noinput"
